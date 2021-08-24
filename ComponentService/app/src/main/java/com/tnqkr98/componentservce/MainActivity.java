@@ -4,9 +4,14 @@ import static com.tnqkr98.componentservce.Constant.EXTRA_RECEIVER;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Service;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.ResultReceiver;
 import android.view.View;
 import android.widget.Button;
@@ -17,7 +22,29 @@ public class MainActivity extends AppCompatActivity {
 
     private ProgressBar progressBar;
     private TextView textView;
-    private Button btn_started, btn_bound;
+    private Button btn_started, btn_call;
+
+    // "Local Bound Service"
+    private LocalBoundService mLocalBoundService;
+    private ServiceConnection mConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            LocalBoundService.LocalBinder binder = (LocalBoundService.LocalBinder) service;
+            mLocalBoundService = binder.getService();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            mLocalBoundService = null;
+        }
+    };
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Intent intent = new Intent(getApplicationContext(),LocalBoundService.class);
+        bindService(intent,mConnection, Context.BIND_AUTO_CREATE);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
         progressBar.setVisibility(View.INVISIBLE);
         textView = findViewById(R.id.textView);
         btn_started = findViewById(R.id.btn_started);
-        btn_bound = findViewById(R.id.btn_bound);
+        btn_call = findViewById(R.id.btn_call);
 
         // Start "Started Service"
         btn_started.setOnClickListener(new View.OnClickListener() {
@@ -41,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        btn_bound.setOnClickListener(new View.OnClickListener() {
+        btn_call.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
