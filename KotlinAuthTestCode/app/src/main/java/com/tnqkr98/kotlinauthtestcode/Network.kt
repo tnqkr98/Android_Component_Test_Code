@@ -1,5 +1,16 @@
 package com.tnqkr98.kotlinauthtestcode
 
-interface Network {
+import retrofit2.Call
+import retrofit2.http.GET
+import retrofit2.http.Query
 
+interface Network {
+    @GET("/api/sms/verify")
+    fun requestAuthMsg(
+        @Query("phoneNumber") phoneNumber:String) : Call<Result>
+
+    @GET("/api/sms/confrim")
+    fun requestAuthConfirm(
+        @Query("phoneNumber") phoneNumber:String,
+        @Query("code") code:String) : Call<Result>
 }
