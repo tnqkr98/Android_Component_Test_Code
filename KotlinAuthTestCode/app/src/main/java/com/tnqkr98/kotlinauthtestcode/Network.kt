@@ -7,7 +7,8 @@ import retrofit2.http.Query
 interface Network {
     @GET("/api/sms/verify")
     fun requestAuthMsg(
-        @Query("phoneNumber") phoneNumber:String) : Call<Result>
+        @Query("phoneNumber") phoneNumber:String,
+        @Query("hashCode") hashCode:String) : Call<Result>
 
     @GET("/api/sms/confrim")
     fun requestAuthConfirm(
