@@ -44,7 +44,8 @@ class MainActivity : AppCompatActivity() {
             else
                 expireTime = 180;
 
-            runOnUiThread { tx_Expiration.text = "만료 시간 : $min:$sec" }
+            var remainTime = String.format("$min:%2d",sec)
+            runOnUiThread { tx_Expiration.text = "만료 시간 : $remainTime" }
         }
     }
 
@@ -53,12 +54,12 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        verfiyEt = findViewById(R.id.et_Verify)
 
         var mTimerThread = HandlerThread("backgroundThread")
         mTimerThread?.start()
         mTimerHandler = Handler(mTimerThread!!.looper)
 
-        verfiyEt = findViewById(R.id.et_Verify)
         registerReceiver(smsReceiver,smsReceiver.doFilter())
 
         bt_AuthMsg.setOnClickListener {
@@ -70,7 +71,8 @@ class MainActivity : AppCompatActivity() {
 
                 gosleepApiService.requestAuthMsg("01022115987",hashcode[0]).enqueue(object : Callback<Result>{
                     override fun onResponse(call: Call<Result>, response: Response<Result>) {
-                        mTimerHandler?.postDelayed(mTimerRunnable,1000);
+                        expireTime = 180
+                        mTimerHandler?.postDelayed(mTimerRunnable,1000)
                     }
                     override fun onFailure(call: Call<Result>, t: Throwable) {
                         t.printStackTrace()
